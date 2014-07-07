@@ -1,0 +1,7 @@
+- local_action: mail
+      subject="Ansible-report"
+      body="Hello, this is an e-mail. I hope you like it ;-)"
+      from="bhanu.chandar@glu.com"
+      to="bhanu.chandar@glu.com"
+      attach="/root/python/installations/hosts"
+      headers=Reply-To="Something or other"

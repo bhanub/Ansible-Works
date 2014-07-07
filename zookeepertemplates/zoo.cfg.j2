@@ -1,0 +1,11 @@
+maxClientCnxns=1000
+tickTime=2000
+dataDir=/var/tmp/zookeeper
+clientPort=2181
+initLimit=5
+syncLimit=2
+{% for host in groups['ZooKeeperNodes'] %}
+server.{{ hostvars[host].zoo_id }}={{ host }}:2888:3888
+{% endfor %}
+autopurge.snapRetainCount=3
+autopurge.purgeInterval=1

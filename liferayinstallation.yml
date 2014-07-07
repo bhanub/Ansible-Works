@@ -1,0 +1,25 @@
+---
+- hosts: LiferayNodes
+  tasks:
+   - name: Remove old files if incase any
+     command: rm -rf /root/liferay
+     sudo: yes
+
+   - name: Make sure that the ansible_backup directory exsists
+     action: file path=/root/liferay state=directory
+     sudo: yes
+
+   - name: Download Liferay
+     get_url: url="http://54.86.185.48:8081/artifactory/Software-Repository/liferay-portal-tomcat-6.2-ce-ga2-20140319114139101.zip" dest=/root/liferay force=no
+     sudo: yes
+
+   - name: Unzip Liferay
+     command: unzip /root/liferay/liferay-portal-tomcat-6.2-ce-ga2-20140319114139101.zip chdir=/root/liferay
+     sudo: yes
+   - name: create a kafka config file
+     action: template src=/root/python/installations/liferaytemplates/portal-ext.properties dest=/root/liferay/liferay-portal-6.2-ce-ga2/tomcat-7.0.42/webapps/ROOT/WEB-INF/classes/portal-ext.properties
+     sudo: yes
+  
+   - name: Start the liferay
+     command: /bin/sh /root/liferay/liferay-portal-6.2-ce-ga2/tomcat-7.0.42/bin/startup.sh
+     sudo: yes

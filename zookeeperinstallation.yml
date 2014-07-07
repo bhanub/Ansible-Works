@@ -1,0 +1,64 @@
+---
+- hosts: ZooKeeperNodes
+  tasks:
+    - name: Remove the folder incase if any
+      command: rm -rf /var/tmp/zookeeper
+      sudo: yes
+
+
+    - name: create a Analytics folder
+      file: path=/var/tmp/zookeeper state=directory
+      sudo: yes
+
+    - name: Remove the folder incase if any
+      command: rm -rf /root/analytics
+      sudo: yes
+
+
+    - name: create a Analytics folder
+      file: path=/root/analytics state=directory
+      sudo: yes
+
+    - name: Download Zookeeper
+      get_url: url="http://apache.spinellicreations.com/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz" dest=/root/analytics force=no
+      sudo: yes
+    
+    - name: Extrack the downloaded file
+      command: tar xzf /root/analytics/zookeeper-3.4.6.tar.gz -C /root/analytics
+      sudo: yes
+
+    - name: create a zookeeper config file
+      action: template src=/root/python/installations/zookeepertemplates/zoo.cfg.j2 dest=/root/analytics/zookeeper-3.4.6/conf/zoo.cfg
+      sudo: yes
+
+  
+    - name: add a string to the new file
+      sudo: yes
+      lineinfile: dest=/var/tmp/zookeeper/myid
+                regexp='^'
+                line={{zoo_id}}
+                state=present
+                create=True
+    - name: Create  a zookeeperservice
+      sudo: yes
+      lineinfile: dest=/root/analytics/zookeeper-3.4.6/bin/myzookeeper.sh
+                regexp='^'
+                line="cd /root/analytics/zookeeper-3.4.6/bin/{{ '\n' }}./zkServer.sh $1"
+                state=present
+                create=True
+    - name: change the file permissions
+      command: chmod 777 /root/analytics/zookeeper-3.4.6/bin/myzookeeper.sh
+      sudo: yes
+    
+    - name: Remove the folder incase if any
+      command: rm -rf /etc/init.d/zookeeper
+      sudo: yes
+
+    - name: change the file permissions
+      command: ln -s /root/analytics/zookeeper-3.4.6/bin/myzookeeper.sh /etc/init.d/zookeeper
+      sudo: yes
+
+
+    - name: Start the zookeeper service
+      action: service name=zookeeper state=started enabled=yes
+      sudo: yes

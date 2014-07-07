@@ -1,0 +1,27 @@
+---
+- hosts: KafkaNodes
+  tasks:
+
+   - name: Make sure that the ansible_backup directory exsists
+     action: file path=/root/analytics state=directory
+     sudo: yes
+   
+   - name: Remove the folder incase if any
+     command: rm -rf /root/analytics/kafka*
+     sudo: yes
+   
+   - name: Download Kafka
+     get_url: url="http://54.86.185.48:8081/artifactory/Software-Repository/kafka_2.10-0.8.1.1.tgz" dest=/root/analytics force=no
+     sudo: yes
+
+   - name: Extrack the downloaded file
+     command: tar xzf /root/analytics/kafka_2.10-0.8.1.1.tgz -C /root/analytics/
+     sudo: yes
+   
+   - name: Move file
+     command: mv /root/analytics/kafka_2.10-0.8.1.1  /root/analytics/kafka
+     sudo: yes
+   
+   - name: create a kafka config file
+     action: template src=/root/python/installations/kafkatemplates/kafka.cfg.j2 dest=/root/analytics/kafka/config/chords.properties
+     sudo: yes   

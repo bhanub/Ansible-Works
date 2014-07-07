@@ -1,0 +1,29 @@
+---
+- hosts: MongoDBNodes
+  tasks:
+        - name: Reach all nodes
+          action: ping
+          sudo: yes   
+
+        - name: Copy MongoDB repo file
+          action: copy src=/root/python/installations/mongodbtemplates/10gen-mongodb.repo dest=/etc/yum.repos.d/10gen-mongodb.repo
+          sudo: yes
+        - name: Install MongoDB packages
+          sudo: yes
+          action: yum pkg=mongo-10gen state=latest
+      
+        - name: Install MongoDB packages
+          sudo: yes
+          action: yum pkg=mongo-10gen-server state=latest
+    
+        - name: Template the MongoDB configuration file
+          action: template src=/root/python/installations/mongodbtemplates/mongod.conf.j2 dest=/etc/mongod.conf
+          sudo: yes
+
+        - name: Template the Mongo configuration file
+          action: template src=/root/python/installations/mongodbtemplates/mongod dest=/etc/init.d/mongod
+          sudo: yes
+
+        - name: Start the  MongoDB service
+          action: service name=mongod state=started enabled=yes 
+          sudo: yes

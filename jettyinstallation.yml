@@ -1,0 +1,38 @@
+---
+- hosts: JettyNodes
+  tasks:
+    - name: Reach all nodes
+      action: ping
+
+    - name: Reach all nodes
+      command: rm -rf /etc/jetty
+      sudo: yes
+
+    - name: Remove old files if incase any
+      command: rm -rf /etc/jetty-distribution-9.0.6.v20130930
+      sudo: yes
+
+    - name: Download Jetty
+      get_url: url="http://54.86.185.48:8081/artifactory/Software-Repository/jetty-distribution-9.0.6.v20130930.zip" dest=/etc/ force=no
+      sudo: yes
+
+    - name: Unzip Jetty
+      command: unzip /etc/jetty-distribution-9.0.6.v20130930.zip chdir=/etc
+      sudo: yes
+    - name: Rename a folder name with jetty 
+      command: mv /etc/jetty-distribution-9.0.6.v20130930 /etc/jetty
+      sudo: yes
+    - lineinfile: dest=/etc/jetty/bin/jetty.sh
+                  regexp='Configuration files'
+                  insertafter='Configuration files'
+                  line='JETTY_HOME=/etc/jetty{{ '\n' }}JETTY_USER=root{{ '\n' }}JETTY_LOGS=/etc/jetty/logs/{{ '\n' }}JAVA_OPTIONS+="-Ddeployed.environment=stage -Xms1024m -Xmx2048m -server -XX:+UseConcMarkSweepGC"{{ '\n' }}'
+      sudo: yes
+    - name: unlink a file incase if any
+      command: unlink /etc/init.d/jetty
+      sudo: yes
+    - name: create a link file
+      command: ln -s /etc/jetty/bin/jetty.sh /etc/init.d/jetty
+      sudo: yes
+    - name: start jetty service
+      service: name=jetty state=started
+

@@ -1,0 +1,19 @@
+broker.id={{ broker.id }}
+port=9092
+host.name={{ host }}
+num.network.threads=200
+num.io.threads=2000
+socket.send.buffer.bytes=1048576
+socket.receive.buffer.bytes=1048576
+socket.request.max.bytes=104857600
+log.dirs=/var/tmp/kafka-logs
+num.partitions=3
+log.flush.interval.messages=10000
+log.flush.interval.ms=1000
+log.retention.hours=24
+log.segment.bytes=536870912
+log.cleanup.interval.mins=5
+{% for host in groups['KafkaNodes'] %}
+zookeeper.connect={{ host }}:2181|join(",")
+{% endfor %}
+zookeeper.connection.timeout.ms=1000000

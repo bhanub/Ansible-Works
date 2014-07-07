@@ -1,0 +1,34 @@
+---
+- hosts: JettyNodes
+  tasks:
+    - name: Reach all nodes
+      action: ping
+    - name: Reach all nodes
+      command: rm -rf /root/jetty
+      sudo: yes
+    - name: Create Jetty directory
+      file: path=/etc/jetty state=directory owner=root group=root
+      sudo: yes
+
+    - name: Download Jetty
+      get_url: url="http://eclipse.org/downloads/download.php?file=/jetty/9.0.6.v20130930/dist/jetty-distribution-9.0.6.v20130930.zip" dest=/etc/jetty force=no
+      sudo: yes
+
+    - name: Unzip Jetty
+      command: unzip /etc/jetty/jetty-distribution-9.0.6.v20130930.zip
+      sudo: yes
+
+    - name: move file
+      command: mv /etc/jetty/jetty-distribution-9.0.6.v20130930 /etc/jetty/jetty
+      sudo: yes
+
+    - lineinfile: dest=/etc/jetty/jetty/bin/jetty.sh
+                  regexp='Configuration files'
+                  insertafter='Configuration files'
+                  line='JETTY_USER=root\nJETTY_LOGS=/etc/jetty/logs/\nJAVA_OPTIONS+="-Ddeployed.environment=stage -Xms1024m -Xmx2048m -server -XX:+UseConcMarkSweepGC"\n' 
+
+    - name: link file
+      command: ln -s /etc/jetty/jetty/bin/jetty.sh /etc/init.d/jetty
+      sudo: yes
+    - name: restart jetty
+      service: name=jetty state=start

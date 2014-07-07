@@ -1,0 +1,33 @@
+---
+- hosts: JmeterNodes
+  tasks:
+    - name: Reach all nodes
+      action: ping
+
+    - name: Remove Jmeter folder if   incase any
+      command: rm -rf /root/Jmeter
+      sudo: yes
+   
+    - name: Create Jmeter directory
+      file: path=/root/Jmeter state=directory owner=root group=root
+      sudo: yes
+
+    - name: Download Jmeter
+      get_url: url="ftp://ftp.osuosl.org/pub/apache//jmeter/binaries/apache-jmeter-2.11.zip" dest=/root/Jmeter force=no
+      sudo: yes
+
+    - name: Unzip Jmeter
+      command: unzip /root/Jmeter/apache-jmeter-2.11.zip chdir=/root/Jmeter
+      sudo: yes
+
+    - name: Remove  Jmeter zip file
+      command: rm -rf /root/Jmeter/apache-jmeter-2.11.zip 
+      sudo: yes
+
+    - name: Create JmeterScripts directory
+      file: path=/root/Jmeter/JmeterScripts state=directory owner=root group=root
+      sudo: yes
+
+    - name: Create JmeterReports directory
+      file: path=/root/Jmeter/JmeterReports state=directory owner=root group=root
+      sudo: yes
