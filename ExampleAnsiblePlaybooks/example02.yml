@@ -1,0 +1,9 @@
+---
+- hosts: TestNodes
+  tasks:
+  - name: Make sure all OS patches are applied
+    shell: apt-get update -y
+    sudo: yes 
+  - name: Install our needed packages for AWS Linux
+    shell: apt-get install -y git
+    sudo: yes

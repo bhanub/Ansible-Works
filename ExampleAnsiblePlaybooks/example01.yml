@@ -1,0 +1,6 @@
+---
+- hosts: TestNodes
+  tasks:
+  - name: Make sure all OS patches are applied
+    shell: apt-get update -y
+    sudo: yes 
