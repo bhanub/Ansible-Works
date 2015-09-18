@@ -1,2 +1,2 @@
 [JettyNodes]
-10.10.1.196  ansible_ssh_user=root ansible_ssh_pass=triloq123
+10.10.1.10  ansible_ssh_user=root ansible_ssh_pass=password
