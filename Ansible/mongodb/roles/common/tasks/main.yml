@@ -1,0 +1,20 @@
+---
+  - name: Importing the MongoDB public GPG Key
+    shell: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+    sudo: yes
+ 
+  - name: Create a list file for MongoDB
+    shell: echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
+    sudo: yes
+ 
+  - name: Reload local package database
+    shell: apt-get update
+    ignore_errors: yes
+    sudo: yes
+
+  - name: Install the MongoDB packages
+    apt: name=mongodb-org state=present
+
+  - name:  prevent unintended upgrades
+    shell: echo "mongodb-org hold" | sudo dpkg --set-selections;echo "mongodb-org-server hold" | sudo dpkg --set-selections;echo "mongodb-org-shell hold" | sudo dpkg --set-selections;echo "mongodb-org-mongos hold" | sudo dpkg --set-selections;echo "mongodb-org-tools hold" | sudo dpkg --set-selections
+    sudo: yes
