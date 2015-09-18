@@ -1,3 +1,0 @@
----
-    - name: start jetty service
-      service: name=jetty state=started
